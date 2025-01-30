@@ -27,10 +27,27 @@ jobs:
         echo "ZOLARA_GIT_TAG=$ZOLARA_GIT_TAG" >> $GITHUB_ENV
     
     - name: Build with tag
-      run: go build -a -installsuffix cgo -o pkiVaultService-${ZOLARA_GIT_TAG} .
+      run: go build -a -installsuffix cgo -o pki-vault-service-${ZOLARA_GIT_TAG} .
 
     - name: Upload artifact with tag
       uses: actions/upload-artifact@v4
       with:
-        name: pkiVaultService-${{ env.ZOLARA_GIT_TAG }}
-        path: ${{ github.workspace }}/pkiVaultService-${{ env.ZOLARA_GIT_TAG }}
+        name: pki-vault-service-${{ env.ZOLARA_GIT_TAG }}
+        path: ${{ github.workspace }}/pki-vault-service-${{ env.ZOLARA_GIT_TAG }}
+
+    - name: Login to Harbor
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ env.HARBOR_PATH }}
+        username: ${{ secrets.HARBOR_USERNAME  }}
+        password: ${{ secrets.HARBOR_PASSWORD }}
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t ${{ env.HARBOR_PATH }}/pki-vault-service:${{ env.ZOLARA_GIT_TAG }} .
+        docker push ${{ env.HARBOR_PATH }}/pki-vault-service:${{ env.ZOLARA_GIT_TAG }}
+
+    - name: Push the helm chart to Harbor
+      run: |
+        helm package helm/pki-vault-service
+        helm push pki-vault-service-${{ env.ZOLARA_GIT_TAG }} ${{ env.HARBOR_PATH }}/pki-vault-service-helm-${{ env.ZOLARA_GIT_TAG }}.tgz

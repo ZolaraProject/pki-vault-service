@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	// server ""
+
+	server "github.com/ZolaraProject/pki-vault-service/pkivault"
 )
 
 const (
@@ -14,17 +15,16 @@ const (
 )
 
 func main() {
-	log.Printf("Starting config-vault-service version %s\n", server.TrinityServiceVersion)
 	var ok bool
 	server.DbPort, ok = os.LookupEnv("DB_PORT")
 	if !ok {
 		log.Printf("Warning: could not read $DB_PORT, starting server with default DB port (%s)", defaultDbPort)
 		server.DbPort = defaultDbPort
 	}
-	server.DbPortSingle, ok = os.LookupEnv("DB_PORT_SINGLE")
+	server.DbPort, ok = os.LookupEnv("DB_PORT_SINGLE")
 	if !ok {
 		log.Printf("Warning: could not read $DB_PORT_SINGLE, starting server with default DB port (%s)", defaultDbPort)
-		server.DbPortSingle = defaultDbPort
+		server.DbPort = defaultDbPort
 	}
 	server.DbHostname, ok = os.LookupEnv("DB_HOSTNAME")
 	if !ok {

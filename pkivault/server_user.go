@@ -2,24 +2,21 @@ package pkivault
 
 import (
 	// . ""
-	"back/utils"
 	"database/sql"
 	fmt "fmt"
-	. "pkivaultrpc"
 	"strings"
 
 	logger "github.com/ZolaraProject/library/logger"
-)
-
-var (
-	config utils.Config
-	db     *sql.DB
+	. "github.com/ZolaraProject/pki-vault-service/pkivaultrpc"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func GetUsers(req *UserRequest) (*UserList, error) {
-	config = utils.LoadEnv()
-	db = utils.ConnectDatabase(config)
-	defer db.Close()
+	db, err := sql.Open("postgres", DbUrl())
+	if err != nil {
+		logger.Err("Open error : %v", err)
+		return nil, err
+	}
 
 	query := "SELECT id, email, username, password, role FROM users"
 	totalQuery := "SELECT COUNT(*) FROM users"
@@ -124,9 +121,11 @@ func GetUsers(req *UserRequest) (*UserList, error) {
 }
 
 func GetUserProfile(req *UserInList) (*UserInList, error) {
-	config = utils.LoadEnv()
-	db = utils.ConnectDatabase(config)
-	defer db.Close()
+	db, err := sql.Open("postgres", DbUrl())
+	if err != nil {
+		logger.Err("Open error : %v", err)
+		return nil, err
+	}
 
 	if req.Id == 0 {
 		return nil, fmt.Errorf("id is mandatory")
@@ -140,7 +139,7 @@ func GetUserProfile(req *UserInList) (*UserInList, error) {
 
 	user := UserInList{}
 
-	err := userRow.Scan(&user.Id, &user.Username, &user.Email, &user.Role)
+	err = userRow.Scan(&user.Id, &user.Username, &user.Email, &user.Role)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			logger.Err("user not found")
@@ -229,9 +228,11 @@ func contains(s []string, e string) bool {
 }
 
 func GetUserInterests(req *UserInList) (*UserInterests, error) {
-	config = utils.LoadEnv()
-	db = utils.ConnectDatabase(config)
-	defer db.Close()
+	db, err := sql.Open("postgres", DbUrl())
+	if err != nil {
+		logger.Err("Open error : %v", err)
+		return nil, err
+	}
 
 	if req.Id == 0 {
 		return nil, fmt.Errorf("id is mandatory")
@@ -267,9 +268,11 @@ func GetUserInterests(req *UserInList) (*UserInterests, error) {
 }
 
 func CreateUser(req *UserInList) (*Response, error) {
-	config = utils.LoadEnv()
-	db = utils.ConnectDatabase(config)
-	defer db.Close()
+	db, err := sql.Open("postgres", DbUrl())
+	if err != nil {
+		logger.Err("Open error : %v", err)
+		return nil, err
+	}
 
 	if req.Username == "" || req.Email == "" || (req.Password == "" && !req.IsOAuth) {
 		logger.Err("all the fields are mandatory")
@@ -286,7 +289,7 @@ func CreateUser(req *UserInList) (*Response, error) {
 	}
 
 	var userId sql.NullInt64
-	err := db.QueryRow(query, createUserParams...).Scan(&userId)
+	err = db.QueryRow(query, createUserParams...).Scan(&userId)
 	if err != nil {
 		logger.Err("failed to execute query: %s", err)
 		return nil, fmt.Errorf("failed to execute query: %s", err)
@@ -299,9 +302,11 @@ func CreateUser(req *UserInList) (*Response, error) {
 }
 
 func UpdateUser(req *UserUpdateRequest) (*Response, error) {
-	config = utils.LoadEnv()
-	db = utils.ConnectDatabase(config)
-	defer db.Close()
+	db, err := sql.Open("postgres", DbUrl())
+	if err != nil {
+		logger.Err("Open error : %v", err)
+		return nil, err
+	}
 
 	if req.Id == 0 {
 		return nil, fmt.Errorf("id is mandatory")
@@ -344,7 +349,7 @@ func UpdateUser(req *UserUpdateRequest) (*Response, error) {
 	query += fmt.Sprintf(" WHERE id = $%d", i)
 	updateUserParams = append(updateUserParams, req.Id)
 
-	_, err := db.Exec(query, updateUserParams...)
+	_, err = db.Exec(query, updateUserParams...)
 	if err != nil {
 		logger.Err("failed to execute query: %s", err)
 		return nil, fmt.Errorf("failed to execute query: %s", err)
@@ -356,9 +361,11 @@ func UpdateUser(req *UserUpdateRequest) (*Response, error) {
 }
 
 func DeleteUser(req *UserInList) (*Response, error) {
-	config = utils.LoadEnv()
-	db = utils.ConnectDatabase(config)
-	defer db.Close()
+	db, err := sql.Open("postgres", DbUrl())
+	if err != nil {
+		logger.Err("Open error : %v", err)
+		return nil, err
+	}
 
 	if req.Id == 0 {
 		logger.Err("id is mandatory")
@@ -366,7 +373,7 @@ func DeleteUser(req *UserInList) (*Response, error) {
 	}
 
 	query := "DELETE FROM users WHERE id = $1"
-	_, err := db.Exec(query, req.Id)
+	_, err = db.Exec(query, req.Id)
 	if err != nil {
 		logger.Err("failed to execute query: %s", err)
 		return nil, fmt.Errorf("failed to execute query: %s", err)

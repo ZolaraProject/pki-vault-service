@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
 	health "google.golang.org/grpc/health/grpc_health_v1"
 )
@@ -52,7 +53,8 @@ func Run() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer(grpc.MaxRecvMsgSize(16*1024*1024), grpc.StatsHandler(otelgrpc.NewServerHandler(otelgrpc.WithTracerProvider(otlp.GetTracerProvider()))))
+	provider := trace.NewNoopTracerProvider()
+	s := grpc.NewServer(grpc.MaxRecvMsgSize(16*1024*1024), grpc.StatsHandler(otelgrpc.NewServerHandler(otelgrpc.WithTracerProvider(provider))))
 	// RegisterConfigVaultServiceServer(s, &server{})
 
 	healthService := NewHealthChecker()
