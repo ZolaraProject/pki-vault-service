@@ -35,6 +35,9 @@ jobs:
         name: pki-vault-service-${{ env.ZOLARA_GIT_TAG }}
         path: ${{ github.workspace }}/pki-vault-service-${{ env.ZOLARA_GIT_TAG }}
 
+    - name: Debug env.HARBOR_PATH value
+      run: echo "env.HARBOR_PATH=${{ env.HARBOR_PATHs }}"
+
     - name: Configure Docker for insecure registry
       run: |
         echo '{ "insecure-registries" : ["nexuszolara.me"] }' | sudo tee /etc/docker/daemon.json
@@ -44,8 +47,8 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ${{ env.HARBOR_PATH }}
-        username: ${{ env.HARBOR_USERNAME  }}
-        password: ${{ env.HARBOR_PASSWORD }}
+        username: ${{ secrets.HARBOR_USERNAME  }}
+        password: ${{ secrets.HARBOR_PASSWORD }}
 
     - name: Build and push Docker image
       run: |
