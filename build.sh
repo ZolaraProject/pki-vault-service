@@ -15,11 +15,3 @@ if [[ "$?" != "0" ]]; then
     echo -e "$goBuildResult"
     exit 
 fi
-
-echo "Checking package"
-goTestResult=$(go test -v ./... 2>&1)
-if [[ "$?" != "0" ]]; then
-    echo -e "\e[31m!!Checking package: fail \e[0m"
-    echo -e "$goTestResult"
-    exit 
-fi

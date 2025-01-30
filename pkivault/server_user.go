@@ -1,13 +1,14 @@
 package pkivault
 
 import (
-	. ""
-	"back/logger"
+	// . ""
 	"back/utils"
 	"database/sql"
 	fmt "fmt"
 	. "pkivaultrpc"
 	"strings"
+
+	logger "github.com/ZolaraProject/library/logger"
 )
 
 var (
