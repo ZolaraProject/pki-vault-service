@@ -51,28 +51,28 @@ jobs:
         sudo cp /tmp/harbor.crt /usr/local/share/ca-certificates/harbor.crt
         sudo update-ca-certificates
 
-    - uses: ko-build/setup-ko@v0.8
-    - name: Build and push Docker image using ko and .ko.yaml
-      env:
-        KO_DOCKER_REPO: nexuszolara.me/zolara-microservice
-        GODEBUG: x509ignoreCN=1
+    # - uses: ko-build/setup-ko@v0.8
+    # - name: Build and push Docker image using ko and .ko.yaml
+    #   env:
+    #     KO_DOCKER_REPO: nexuszolara.me/zolara-microservice
+    #     GODEBUG: x509ignoreCN=1
+    #   run: |
+    #     ko login nexuszolara.me --username ${{ secrets.HARBOR_USERNAME }} --password ${{ secrets.HARBOR_PASSWORD }}
+    #     ko build -t ${{ env.ZOLARA_GIT_TAG }} .
+
+    - name: Login to Harbor
+      uses: docker/login-action@v3
+      with:
+        registry: "nexuszolara.me"
+        username: ${{ secrets.HARBOR_USERNAME  }}
+        password: ${{ secrets.HARBOR_PASSWORD }}
+
+    - name: Build and push Docker image
       run: |
-        ko login nexuszolara.me --username ${{ secrets.HARBOR_USERNAME }} --password ${{ secrets.HARBOR_PASSWORD }}
-        ko build -t ${{ env.ZOLARA_GIT_TAG }} .
+        docker build -t nexuszolara.me/pki-vault-service:${{ env.ZOLARA_GIT_TAG }} .
+        docker push nexuszolara.me/pki-vault-service:${{ env.ZOLARA_GIT_TAG }}
 
-    # - name: Login to Harbor
-    #   uses: docker/login-action@v3
-    #   with:
-    #     registry: "nexuszolara.me"
-    #     username: ${{ secrets.HARBOR_USERNAME  }}
-    #     password: ${{ secrets.HARBOR_PASSWORD }}
-
-    # - name: Build and push Docker image
-    #   run: |
-    #     docker build -t nexuszolara.me/pki-vault-service:${{ env.ZOLARA_GIT_TAG }} .
-    #     docker push nexuszolara.me/pki-vault-service:${{ env.ZOLARA_GIT_TAG }}
-
-    # - name: Push the helm chart to Harbor
-    #   run: |
-    #     helm package helm/pki-vault-service
-    #     helm push pki-vault-service-${{ env.ZOLARA_GIT_TAG }} nexuszolara.me/pki-vault-service-helm-${{ env.ZOLARA_GIT_TAG }}.tgz
+    - name: Push the helm chart to Harbor
+      run: |
+        helm package helm/pki-vault-service
+        helm push pki-vault-service-${{ env.ZOLARA_GIT_TAG }} nexuszolara.me/pki-vault-service-helm-${{ env.ZOLARA_GIT_TAG }}.tgz
