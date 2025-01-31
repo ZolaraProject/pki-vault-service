@@ -27,7 +27,7 @@ jobs:
         echo "ZOLARA_GIT_TAG=$ZOLARA_GIT_TAG" >> $GITHUB_ENV
     
     - name: Build with tag
-      run: go build -a -installsuffix cgo -o pki-vault-service-${ZOLARA_GIT_TAG} .
+      run: go build -a -installsuffix cgo -o app .
 
     - name: Upload artifact with tag
       uses: actions/upload-artifact@v4
