@@ -69,10 +69,10 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t nexuszolara.me/pki-vault-service:${{ env.ZOLARA_GIT_TAG }} .
-        docker push nexuszolara.me/pki-vault-service:${{ env.ZOLARA_GIT_TAG }}
+        docker build -t nexuszolara.me/zolara-microservice/pki-vault-service:${{ env.ZOLARA_GIT_TAG }} .
+        docker push nexuszolara.me/zolara-microservice/pki-vault-service:${{ env.ZOLARA_GIT_TAG }}
 
     - name: Push the helm chart to Harbor
       run: |
         helm package helm/pki-vault-service
-        helm push pki-vault-service-${{ env.ZOLARA_GIT_TAG }} nexuszolara.me/pki-vault-service-helm-${{ env.ZOLARA_GIT_TAG }}.tgz
+        HELM_EXPERIMENTAL_OCI=1 helm push pki-vault-service-helm-${{ env.ZOLARA_GIT_TAG }}.tgz oci://nexuszolara.me/zolara-microservice
