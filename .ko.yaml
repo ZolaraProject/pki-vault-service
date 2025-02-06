@@ -2,4 +2,6 @@ builds:
 - id: pki-vault-service
   dir: ./
   outputImage: nexuszolara.me/zolara-microservice/pki-vault-service
+  ldflags:
+  - -s
   
