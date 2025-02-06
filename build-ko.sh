@@ -38,4 +38,5 @@ done
 
 echo "$microservice build started"
 
-docker run --privileged --rm -v $(pwd):/workspace/zolara/$microservice -v "/var/run/docker.sock:/var/run/docker.sock:rw" ko build --local -t $imageTag --base-import-paths
+docker pull nexuszolara.me/library/zolara-ko:v0.1.2
+docker run --privileged --rm -v $(pwd):/workspace/zolara/$microservice -v "/var/run/docker.sock:/var/run/docker.sock:rw" -w /workspace/zolara/$microservice nexuszolara.me/library/zolara-ko:v0.1.2 ko build --local -t $imageTag --base-import-paths
