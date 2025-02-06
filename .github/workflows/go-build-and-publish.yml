@@ -72,7 +72,7 @@ jobs:
     - name: Push to Harbor
       run: |
         echo "Pushing the image to Harbor"
-        docker tag pki-service:${{ env.ZOLARA_GIT_TAG }} nexuszolara.me/zolara-microservice/pki-vault-service:${{ env.ZOLARA_GIT_TAG }}
+        docker tag pki-vault-service:${{ env.ZOLARA_GIT_TAG }} nexuszolara.me/zolara-microservice/pki-vault-service:${{ env.ZOLARA_GIT_TAG }}
         docker push nexuszolara.me/zolara-microservice/pki-vault-service:${{ env.ZOLARA_GIT_TAG }}
 
         echo "Pushing the Helm chart to Harbor"
