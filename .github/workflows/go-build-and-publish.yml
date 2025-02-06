@@ -75,5 +75,7 @@ jobs:
 
     - name: Push the helm chart to Harbor
       run: |
+        sed -i 's#JENKINS_GIT_TAG#${{ env.ZOLARA_GIT_TAG }}#g' helm/pki-vault-service/Chart.yaml
+        sed -i 's#JENKINS_GIT_TAG#${{ env.ZOLARA_GIT_TAG }}#g' helm/pki-vault-service/values.yaml
         helm package helm/pki-vault-service
         HELM_EXPERIMENTAL_OCI=1 helm push pki-vault-service-helm-${{ env.ZOLARA_GIT_TAG }}.tgz oci://nexuszolara.me/zolara-microservice
