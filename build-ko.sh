@@ -13,6 +13,7 @@ usage() {
 
 microservice=pki-vault-service
 user=docker #pass=tcuser
+baseImageTag=v0.1.3
 imageTag=JENKINS_GIT_TAG
 repoUrl=nexuszolara.me/trinity-microservice
 
@@ -37,6 +38,5 @@ while getopts "t:h" option; do
 done
 
 echo "$microservice build started"
-
-docker pull nexuszolara.me/library/zolara-ko:v0.1.2
-docker run --privileged --rm -v $(pwd):/workspace/zolara/$microservice -v "/var/run/docker.sock:/var/run/docker.sock:rw" -w /workspace/zolara/$microservice nexuszolara.me/library/zolara-ko:v0.1.2 ko build --local -t $imageTag --base-import-paths
+docker pull nexuszolara.me/library/zolara-ko:$baseImageTag
+docker run --privileged --rm -v $(pwd):/workspace/zolara/$microservice -v "/var/run/docker.sock:/var/run/docker.sock:rw" -w /workspace/zolara/$microservice nexuszolara.me/library/zolara-ko:$baseImageTag build --local -t $imageTag --base-import-paths
