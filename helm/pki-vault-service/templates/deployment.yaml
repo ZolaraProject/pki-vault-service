@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: "{{ include "pkivaultservice.name" . }}-dpl"
   labels:
-{{ include "pkivaultservice.labels" . | indent 4 }}
+    {{ include "pkivaultservice.labels" . }}
 spec:
   replicas: {{ .Values.replicas }}
   selector: 
     matchLabels:
-{{ include "pkivaultservice.matchLabels" . | indent 6 }}
+      {{ include "pkivaultservice.matchLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-{{ include "pkivaultservice.labels" . | indent 8 }}
+        {{ include "pkivaultservice.labels" . }}
       annotations:
         kubectl.kubernetes.io/default-logs-container: {{ include "pkivaultservice.name" . }}
     spec:
