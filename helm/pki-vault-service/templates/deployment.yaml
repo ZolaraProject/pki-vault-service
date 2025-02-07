@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: "{{ include "pkivaultservice.name" . }}-dpl"
   labels:
-    {{ include "pkivaultservice.labels" . }}
+{{ include "pkivaultservice.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicas }}
   selector: 
     matchLabels:
-      {{ include "pkivaultservice.matchLabels" . | nindent 6 }}
+{{ include "pkivaultservice.matchLabels" . | indent 6 }}
   template:
     metadata:
       labels:
-        {{ include "pkivaultservice.labels" . }}
+{{ include "pkivaultservice.labels" . | indent 8 }}
       annotations:
         kubectl.kubernetes.io/default-logs-container: {{ include "pkivaultservice.name" . }}
     spec:
@@ -22,6 +22,10 @@ spec:
       {{- end }}
       {{- with .Values.securityContext }}
       securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
