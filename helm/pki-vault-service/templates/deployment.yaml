@@ -42,4 +42,6 @@ spec:
             path: /healthz
             port: {{ .Values.port }}
         lifecycle:
-{{ toYaml .Values.lifecycle | indent 10 }}
+          preStop:
+            exec:
+              command: {{ toYaml .Values.lifecycle.preStop.exec.command | nindent 14 }}

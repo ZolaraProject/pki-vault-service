@@ -16,7 +16,7 @@ image:
 lifecycle:
   preStop:
     exec:
-      command: ["sleep", 15]
+      command: ["sleep", "15"]
 
 port: 8080
 logLevel: DEBUG
