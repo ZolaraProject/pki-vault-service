@@ -42,4 +42,4 @@ spec:
             path: /healthz
             port: {{ .Values.port }}
         lifecycle:
-          {{ toYaml .Values.lifecycle | nindent 10 }}
+{{ toYaml .Values.lifecycle | indent 10 }}
