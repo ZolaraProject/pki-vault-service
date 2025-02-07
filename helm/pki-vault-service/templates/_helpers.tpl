@@ -1,17 +1,17 @@
-{{- define "pkiVaultService.name" -}}
+{{- define "pkivaultservice.name" -}}
 {{- default "pki-vault-service" .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/* Helm required labels */}}
-{{- define "pkiVaultService.labels" -}}
+{{- define "pkivaultservice.labels" -}}
 heritage: {{ .Release.Service }}
 release: {{ .Release.Name }}
 chart: {{ .Chart.Name }}
-app: "{{ template "pkiVaultService.name" . }}"
+app: "{{ template "pkivaultservice.name" . }}"
 {{- end -}}
 
 {{/* matchLabels */}}
-{{- define "pkiVaultService.matchLabels" -}}
+{{- define "pkivaultservice.matchLabels" -}}
 release: {{ .Release.Name }}
-app: "{{ template "pkiVaultService.name" . }}"
+app: "{{ template "pkivaultservice.name" . }}"
 {{- end -}}

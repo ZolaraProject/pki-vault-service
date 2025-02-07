@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ include "pkiVaultService.name" . }}"
+  name: "{{ include "pkivaultservice.name" . }}"
   labels:
-{{ include "pkiVaultService.labels" . | indent 4 }}
+{{ include "pkivaultservice.labels" . | indent 4 }}
 spec:
   ports:
     - port: {{ .Values.port }}
       targetPort: {{ .Values.service.port }}
   selector:
-{{ include "pkiVaultService.matchLabels" . | indent 4 }}
+{{ include "pkivaultservice.matchLabels" . | indent 4 }}
