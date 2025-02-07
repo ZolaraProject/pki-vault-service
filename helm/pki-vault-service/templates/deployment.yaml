@@ -41,7 +41,7 @@ spec:
           httpGet:
             path: /healthz
             port: {{ .Values.port }}
-        lifecycle:
-          preStop:
-            exec:
-              command: {{ toYaml .Values.lifecycle.preStop.exec.command | nindent 14 }}
+        # lifecycle:
+        #   preStop:
+        #     exec:
+        #       command: {{ toYaml .Values.lifecycle.preStop.exec.command | nindent 14 }}
