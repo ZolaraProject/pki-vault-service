@@ -1,7 +1,6 @@
 package pkivault
 
 import (
-	// . ""
 	"database/sql"
 	fmt "fmt"
 	"strings"
@@ -11,7 +10,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func GetUsers(req *UserRequest) (*UserList, error) {
+func (*server) GetUsers(req *UserRequest) (*UserList, error) {
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
@@ -120,7 +119,7 @@ func GetUsers(req *UserRequest) (*UserList, error) {
 	return userList, nil
 }
 
-func GetUserProfile(req *UserInList) (*UserInList, error) {
+func (*server) GetUserProfile(req *UserInList) (*UserInList, error) {
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
@@ -150,15 +149,13 @@ func GetUserProfile(req *UserInList) (*UserInList, error) {
 		return nil, fmt.Errorf("failed to execute query: %s", err)
 	}
 
-	languageActionQuery := `SELECT u.id AS user_id, l.name AS language, lv.name AS level, a.name, al.name AS action_level
+	languageActionQuery := `SELECT u.id AS user_id, l.name AS language, a.name
 	FROM user_profiles up
 	JOIN users u ON up.user_id = u.id
 	JOIN languages l ON up.language_id = l.id
-	JOIN actions_levels al ON up.actions_levels_id = al.id
-	JOIN levels lv ON al.level_id = lv.id
-	LEFT JOIN actions a ON al.action_id = a.id
+	LEFT JOIN actions a ON up.action_id = a.id
 	WHERE u.id = $1
-	GROUP BY u.id, u.email, u.username, l.name, lv.name, a.name, al.name
+	GROUP BY u.id, u.email, u.username, l.name, a.name
 	ORDER BY u.id, l.name`
 
 	rows, err := db.Query(languageActionQuery, req.Id)
@@ -178,31 +175,22 @@ func GetUserProfile(req *UserInList) (*UserInList, error) {
 		var (
 			id       int64
 			language string
-			level    string
 			// actions   []sql.NullString
-			action      sql.NullString
-			actionLevel sql.NullString
+			action sql.NullString
 		)
 
-		if err := rows.Scan(&id, &language, &level, &action, &actionLevel); err != nil {
+		if err := rows.Scan(&id, &language, &action); err != nil {
 			logger.Err("failed to scan row: %s", err)
 			return nil, fmt.Errorf("failed to scan row: %s", err)
 		}
 
-		var actionString string = ""
-		if action.Valid && actionLevel.Valid {
-			actionString = fmt.Sprintf("%s %s", action.String, actionLevel.String)
-		}
-
 		if _, ok := userLanguageMap[language]; !ok {
 			userLanguageMap[language] = append(userLanguageMap[language], &UserAction{
-				Level:  level,
-				Action: actionString,
+				Action: action.String,
 			})
 		} else {
 			userLanguageMap[language] = append(userLanguageMap[language], &UserAction{
-				Level:  level,
-				Action: actionString,
+				Action: action.String,
 			})
 		}
 	}
@@ -217,17 +205,7 @@ func GetUserProfile(req *UserInList) (*UserInList, error) {
 	return &user, nil
 }
 
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-
-	return false
-}
-
-func GetUserInterests(req *UserInList) (*UserInterests, error) {
+func (*server) GetUserInterests(req *UserInList) (*UserInterests, error) {
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
@@ -267,7 +245,7 @@ func GetUserInterests(req *UserInList) (*UserInterests, error) {
 	}, nil
 }
 
-func CreateUser(req *UserInList) (*Response, error) {
+func (*server) CreateUser(req *UserInList) (*Response, error) {
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
@@ -301,7 +279,7 @@ func CreateUser(req *UserInList) (*Response, error) {
 	}, nil
 }
 
-func UpdateUser(req *UserUpdateRequest) (*Response, error) {
+func (*server) UpdateUser(req *UserUpdateRequest) (*Response, error) {
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
@@ -360,7 +338,7 @@ func UpdateUser(req *UserUpdateRequest) (*Response, error) {
 	}, nil
 }
 
-func DeleteUser(req *UserInList) (*Response, error) {
+func (*server) DeleteUser(req *UserInList) (*Response, error) {
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
