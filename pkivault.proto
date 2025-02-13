@@ -1,8 +1,8 @@
 syntax = "proto3";
-package userVault;
-option go_package = "back/vault/userVault";
+package pkiVault;
+option go_package = "back/vault/pkiVault";
 
-service UserVault {
+service pkiVault {
     rpc GetUsers(UserRequest) returns (UserList) {}
     rpc GetUserProfile(UserInList) returns (UserInList) {}
     rpc GetUserInterests(UserInList) returns (UserInterests) {}
