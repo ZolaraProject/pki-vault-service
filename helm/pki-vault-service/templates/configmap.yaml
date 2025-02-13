@@ -7,3 +7,5 @@ metadata:
 data:
   EXPOSE_PORT: {{ .Values.port | quote }}
   LOG_LEVEL: {{ .Values.logLevel | quote }}
+  DB_HOSTNAME: {{ .Values.database.host | quote }}
+  DB_PORT: {{ .Values.database.port | quote }}

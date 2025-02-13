@@ -24,10 +24,6 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       containers:
       - name: {{ include "pkivaultservice.name" . }}
         image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}
@@ -40,6 +36,17 @@ spec:
         readinessProbe:
           httpGet:
             path: /healthz
-            port: {{ .Values.port }}
+            port: 8081
         lifecycle:
           {{ toYaml .Values.lifecycle | nindent 10 }}
+        env:
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: password

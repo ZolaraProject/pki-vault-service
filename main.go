@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -21,28 +20,19 @@ func main() {
 		log.Printf("Warning: could not read $DB_PORT, starting server with default DB port (%s)", defaultDbPort)
 		server.DbPort = defaultDbPort
 	}
-	server.DbPort, ok = os.LookupEnv("DB_PORT_SINGLE")
-	if !ok {
-		log.Printf("Warning: could not read $DB_PORT_SINGLE, starting server with default DB port (%s)", defaultDbPort)
-		server.DbPort = defaultDbPort
-	}
 	server.DbHostname, ok = os.LookupEnv("DB_HOSTNAME")
 	if !ok {
 		log.Printf("Warning: could not read $DB_HOSTNAME, starting server with default DB hostname (%s)", defaultDbHostname)
 		server.DbHostname = defaultDbHostname
 	}
-	dbUser, err := os.ReadFile("/root/trinityDataMaster/userName")
-	if err != nil {
-		log.Printf("Warning: could not read DB user, starting server with default DB user (%s)", defaultDbUser)
+	dbUser := os.Getenv("DB_USERNAME")
+	if len(dbUser) == 0 {
+		log.Printf("Warning: could not read $DB_USERNAME, starting server with default DB username (%s)", defaultDbUser)
 		server.DbUser = defaultDbUser
-	} else {
-		server.DbUser = fmt.Sprintf("%s", dbUser)
 	}
-	dbPassword, err := os.ReadFile("/")
-	if err != nil {
-		log.Fatal("Fatal: could not read DB password")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	if len(dbPassword) == 0 {
+		log.Fatal("Error: could not read $DB_PASSWORD")
 	}
-	server.DbPassword = fmt.Sprintf("%s", dbPassword)
-
 	server.Run()
 }

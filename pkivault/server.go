@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -32,10 +33,14 @@ func NewHealthChecker() *HealthChecker {
 }
 
 func (s *HealthChecker) Check(ctx context.Context, req *health.HealthCheckRequest) (*health.HealthCheckResponse, error) {
-	//todo: perform actual health check (database or other backend statuses, etc)
 	return &health.HealthCheckResponse{
 		Status: health.HealthCheckResponse_SERVING,
 	}, nil
+}
+
+func healthzHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "OK")
 }
 
 // Run implements Run
@@ -60,6 +65,11 @@ func Run() {
 	healthService := NewHealthChecker()
 	health.RegisterHealthServer(s, healthService)
 
+	go func() {
+		http.HandleFunc("/healthz", healthzHandler)
+		log.Fatal(http.ListenAndServe(":8081", nil))
+	}()
+
 	termChan := make(chan os.Signal)
 	signal.Notify(termChan, syscall.SIGTERM) // Received after the preStop hook
 
@@ -79,5 +89,5 @@ func Run() {
 }
 
 func DbUrl() string {
-	return fmt.Sprintf("postgres://%s:%s@localhost/myrailsdb", DbUser, DbPassword, DbHostname, DbPort)
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/zolara", DbUser, DbPassword, DbHostname, DbPort)
 }

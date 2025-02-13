@@ -3,12 +3,9 @@ fullnameOverride: ""
 
 replicas: 1
 
-imagePullSecrets:
-  - name: regcred-harbor
-
 image:
   repository: nexuszolara.me
-  name: zolara-microservices/pki-vault-service
+  name: zolara-microservice/pki-vault-service
   tag: ZOLARA_GIT_TAG
   pullPolicy: IfNotPresent
   extraAnnotations: {}
