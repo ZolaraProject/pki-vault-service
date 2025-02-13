@@ -1,6 +1,7 @@
 package pkivault
 
 import (
+	"context"
 	"database/sql"
 	fmt "fmt"
 	"strings"
@@ -10,7 +11,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func (*server) GetUsers(req *UserRequest) (*UserList, error) {
+func (*server) GetUsers(ctx context.Context, req *UserRequest) (*UserList, error) {
+	logger.Debug("GetUsers context: %v", ctx)
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
@@ -119,7 +121,7 @@ func (*server) GetUsers(req *UserRequest) (*UserList, error) {
 	return userList, nil
 }
 
-func (*server) GetUserProfile(req *UserInList) (*UserInList, error) {
+func (*server) GetUserProfile(ctx context.Context, req *UserInList) (*UserInList, error) {
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
@@ -205,7 +207,7 @@ func (*server) GetUserProfile(req *UserInList) (*UserInList, error) {
 	return &user, nil
 }
 
-func (*server) GetUserInterests(req *UserInList) (*UserInterests, error) {
+func (*server) GetUserInterests(ctx context.Context, req *UserInList) (*UserInterests, error) {
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
@@ -245,7 +247,7 @@ func (*server) GetUserInterests(req *UserInList) (*UserInterests, error) {
 	}, nil
 }
 
-func (*server) CreateUser(req *UserInList) (*Response, error) {
+func (*server) CreateUser(ctx context.Context, req *UserInList) (*Response, error) {
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
@@ -279,7 +281,7 @@ func (*server) CreateUser(req *UserInList) (*Response, error) {
 	}, nil
 }
 
-func (*server) UpdateUser(req *UserUpdateRequest) (*Response, error) {
+func (*server) UpdateUser(ctx context.Context, req *UserUpdateRequest) (*Response, error) {
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
@@ -338,7 +340,7 @@ func (*server) UpdateUser(req *UserUpdateRequest) (*Response, error) {
 	}, nil
 }
 
-func (*server) DeleteUser(req *UserInList) (*Response, error) {
+func (*server) DeleteUser(ctx context.Context, req *UserInList) (*Response, error) {
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)
