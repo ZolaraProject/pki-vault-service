@@ -14,7 +14,7 @@ usage() {
 microservice=pki-vault-service
 user=docker #pass=tcuser
 baseImageTag=v0.1.3
-imageTag=JENKINS_GIT_TAG
+imageTag=ZOLARA_GIT_TAG
 repoUrl=nexuszolara.me/trinity-microservice
 
 while getopts "t:h" option; do
