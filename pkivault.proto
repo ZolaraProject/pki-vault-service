@@ -2,7 +2,7 @@ syntax = "proto3";
 package pkivaultrpc;
 option go_package = "github.com/ZolaraProject/pki-vault-service/pkivaultrpc";
 
-service pkivaultrpc {
+service pkiVaultService {
     rpc GetUsers(UserRequest) returns (UserList) {}
     rpc GetUserProfile(UserInList) returns (UserInList) {}
     rpc GetUserInterests(UserInList) returns (UserInterests) {}
