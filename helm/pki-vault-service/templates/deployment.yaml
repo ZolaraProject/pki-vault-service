@@ -41,3 +41,5 @@ spec:
           httpGet:
             path: /healthz
             port: {{ .Values.port }}
+        lifecycle:
+          {{ toYaml .Values.lifecycle | nindent 10 }}
