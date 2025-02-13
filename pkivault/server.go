@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	. "github.com/ZolaraProject/pki-vault-service/pkivaultrpc"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
@@ -23,6 +24,10 @@ var (
 	DbPassword string
 	DbName     string
 )
+
+type server struct {
+	UnimplementedPkiVaultServiceServer
+}
 
 type HealthChecker struct {
 	health.UnimplementedHealthServer
@@ -60,7 +65,7 @@ func Run() {
 
 	provider := trace.NewNoopTracerProvider()
 	s := grpc.NewServer(grpc.MaxRecvMsgSize(16*1024*1024), grpc.StatsHandler(otelgrpc.NewServerHandler(otelgrpc.WithTracerProvider(provider))))
-	// RegisterConfigVaultServiceServer(s, &server{})
+	RegisterPkiVaultServiceServer(s, &server{})
 
 	healthService := NewHealthChecker()
 	health.RegisterHealthServer(s, healthService)
