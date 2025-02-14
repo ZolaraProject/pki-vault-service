@@ -22,7 +22,7 @@ maximumStorageUses: 50
 
 database:
   host: "postgres.database.svc.cluster.local"
-  port: 3306
+  port: 5432
 
 # If host or port are omitted, they will fallback to database.host / database.port
 database_single: {}
