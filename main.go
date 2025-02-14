@@ -25,8 +25,8 @@ func main() {
 		log.Printf("Warning: could not read $DB_HOSTNAME, starting server with default DB hostname (%s)", defaultDbHostname)
 		server.DbHostname = defaultDbHostname
 	}
-	dbUser := os.Getenv("DB_USERNAME")
-	if len(dbUser) == 0 {
+	server.DbUser, ok = os.LookupEnv("DB_USERNAME")
+	if !ok {
 		log.Printf("Warning: could not read $DB_USERNAME, starting server with default DB username (%s)", defaultDbUser)
 		server.DbUser = defaultDbUser
 	}
@@ -34,5 +34,6 @@ func main() {
 	if len(dbPassword) == 0 {
 		log.Fatal("Error: could not read $DB_PASSWORD")
 	}
+	server.DbPassword = dbPassword
 	server.Run()
 }

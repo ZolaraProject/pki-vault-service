@@ -8,11 +8,10 @@ import (
 
 	logger "github.com/ZolaraProject/library/logger"
 	. "github.com/ZolaraProject/pki-vault-service/pkivaultrpc"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 func (*server) GetUsers(ctx context.Context, req *UserRequest) (*UserList, error) {
-	logger.Debug("GetUsers context: %v", ctx)
 	db, err := sql.Open("postgres", DbUrl())
 	if err != nil {
 		logger.Err("Open error : %v", err)

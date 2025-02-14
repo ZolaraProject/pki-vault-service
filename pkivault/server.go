@@ -94,5 +94,5 @@ func Run() {
 }
 
 func DbUrl() string {
-	return fmt.Sprintf("postgres://%s:%s@%s:%s/zolara", DbUser, DbPassword, DbHostname, DbPort)
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/zolara?sslmode=disable", DbUser, DbPassword, DbHostname, DbPort)
 }
