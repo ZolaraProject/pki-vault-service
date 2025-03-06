@@ -207,6 +207,67 @@ func (*server) GetUserProfile(ctx context.Context, req *GetUserRequest) (*UserIn
 	return &user, nil
 }
 
+func (*server) UpdateUser(ctx context.Context, req *UserUpdateRequest) (*Response, error) {
+	grpcToken := grpctoken.GetToken(ctx)
+
+	db, err := sql.Open("postgres", DbUrl())
+	if err != nil {
+		logger.Err(grpcToken, "Open error : %v", err)
+		return nil, err
+	}
+
+	if req.Id == 0 {
+		return nil, fmt.Errorf("id is mandatory")
+	}
+
+	query := "UPDATE users SET "
+	updateUserParams := []interface{}{}
+
+	i := 1
+	if req.Username != "" {
+		query += fmt.Sprintf("username = $%d", i)
+		updateUserParams = append(updateUserParams, req.Username)
+		i++
+	}
+	if req.Email != "" {
+		if i != 1 {
+			query += ","
+		}
+		query += fmt.Sprintf(" email = $%d", i)
+		updateUserParams = append(updateUserParams, req.Email)
+		i++
+	}
+	if req.Password != "" {
+		if i != 1 {
+			query += ","
+		}
+		query += fmt.Sprintf(" password = $%d", i)
+		updateUserParams = append(updateUserParams, req.Password)
+		i++
+	}
+	if len(req.Role.String()) > 0 {
+		if i != 1 {
+			query += ","
+		}
+		query += fmt.Sprintf(" role = $%d", i)
+		updateUserParams = append(updateUserParams, strings.ToLower(req.Role.String()))
+		i++
+	}
+
+	query += fmt.Sprintf(" WHERE id = $%d", i)
+	updateUserParams = append(updateUserParams, req.Id)
+
+	_, err = db.Exec(query, updateUserParams...)
+	if err != nil {
+		logger.Err(grpcToken, "failed to execute query: %s", err)
+		return nil, fmt.Errorf("failed to execute query: %s", err)
+	}
+
+	return &Response{
+		Message: "User updated successfully",
+	}, nil
+}
+
 // func (*server) GetUserInterests(ctx context.Context, req *UserInList) (*UserInterests, error) {
 // 	db, err := sql.Open("postgres", DbUrl())
 // 	if err != nil {
