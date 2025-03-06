@@ -4,11 +4,15 @@ option go_package = "github.com/ZolaraProject/pki-vault-service/pkivaultrpc";
 
 service pkiVaultService {
     rpc GetUsers(UserRequest) returns (UserList) {}
-    rpc GetUserProfile(UserInList) returns (UserInList) {}
-    rpc GetUserInterests(UserInList) returns (UserInterests) {}
-    rpc CreateUser(UserInList) returns (Response) {}
+    rpc GetUserProfile(GetUserRequest) returns (UserInList) {}
+    rpc CreateUser(UserCreateRequest) returns (Response) {}
     rpc UpdateUser(UserUpdateRequest) returns (Response) {}
-    rpc DeleteUser(UserInList) returns (Response) {}
+    rpc DeleteUser(UserDeleteRequest) returns (Response) {}
+}
+
+enum UserRole {
+    ADMIN = 0;
+    USER = 1;
 }
 
 message PagingQuery {
@@ -19,23 +23,9 @@ message PagingQuery {
     int64 offset = 5;
 }
 
-message UserInterests {
-    repeated string interests = 1;
-}
-
-message UserLanguageProfile {
-    string language = 1;
-    repeated UserAction actions = 2;
-}
-
-message UserAction {
-    string level = 1;
-    string action = 2;
-}
-
-enum UserRole {
-    ADMIN = 0;
-    USER = 1;
+// request messages
+message UserDeleteRequest {
+    int64 id = 1;
 }
 
 message UserUpdateRequest {
@@ -46,10 +36,27 @@ message UserUpdateRequest {
     UserRole role = 5;
 }
 
+message UserCreateRequest {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+    bool isOAuth = 4;
+}
+
+message GetUserRequest {
+    int64 id = 1;
+}
+
 message UserRequest {
     PagingQuery pagingQuery = 1;
     string username = 2;
     string email = 3;
+}
+
+// response messages
+message UserList {
+    repeated UserInList users = 1;
+    int64 total = 2;
 }
 
 message UserInList {
@@ -62,9 +69,9 @@ message UserInList {
     bool isOAuth = 7;
 }
 
-message UserList {
-    repeated UserInList users = 1;
-    int64 total = 2;
+message UserLanguageProfile {
+    string language = 1;
+    repeated string actions = 2;
 }
 
 message Response {

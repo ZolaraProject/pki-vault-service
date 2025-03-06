@@ -19,12 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PkiVaultService_GetUsers_FullMethodName         = "/pkivaultrpc.pkiVaultService/GetUsers"
-	PkiVaultService_GetUserProfile_FullMethodName   = "/pkivaultrpc.pkiVaultService/GetUserProfile"
-	PkiVaultService_GetUserInterests_FullMethodName = "/pkivaultrpc.pkiVaultService/GetUserInterests"
-	PkiVaultService_CreateUser_FullMethodName       = "/pkivaultrpc.pkiVaultService/CreateUser"
-	PkiVaultService_UpdateUser_FullMethodName       = "/pkivaultrpc.pkiVaultService/UpdateUser"
-	PkiVaultService_DeleteUser_FullMethodName       = "/pkivaultrpc.pkiVaultService/DeleteUser"
+	PkiVaultService_GetUsers_FullMethodName       = "/pkivaultrpc.pkiVaultService/GetUsers"
+	PkiVaultService_GetUserProfile_FullMethodName = "/pkivaultrpc.pkiVaultService/GetUserProfile"
+	PkiVaultService_CreateUser_FullMethodName     = "/pkivaultrpc.pkiVaultService/CreateUser"
+	PkiVaultService_UpdateUser_FullMethodName     = "/pkivaultrpc.pkiVaultService/UpdateUser"
+	PkiVaultService_DeleteUser_FullMethodName     = "/pkivaultrpc.pkiVaultService/DeleteUser"
 )
 
 // PkiVaultServiceClient is the client API for PkiVaultService service.
@@ -32,11 +31,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PkiVaultServiceClient interface {
 	GetUsers(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserList, error)
-	GetUserProfile(ctx context.Context, in *UserInList, opts ...grpc.CallOption) (*UserInList, error)
-	GetUserInterests(ctx context.Context, in *UserInList, opts ...grpc.CallOption) (*UserInterests, error)
-	CreateUser(ctx context.Context, in *UserInList, opts ...grpc.CallOption) (*Response, error)
+	GetUserProfile(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserInList, error)
+	CreateUser(ctx context.Context, in *UserCreateRequest, opts ...grpc.CallOption) (*Response, error)
 	UpdateUser(ctx context.Context, in *UserUpdateRequest, opts ...grpc.CallOption) (*Response, error)
-	DeleteUser(ctx context.Context, in *UserInList, opts ...grpc.CallOption) (*Response, error)
+	DeleteUser(ctx context.Context, in *UserDeleteRequest, opts ...grpc.CallOption) (*Response, error)
 }
 
 type pkiVaultServiceClient struct {
@@ -57,7 +55,7 @@ func (c *pkiVaultServiceClient) GetUsers(ctx context.Context, in *UserRequest, o
 	return out, nil
 }
 
-func (c *pkiVaultServiceClient) GetUserProfile(ctx context.Context, in *UserInList, opts ...grpc.CallOption) (*UserInList, error) {
+func (c *pkiVaultServiceClient) GetUserProfile(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserInList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserInList)
 	err := c.cc.Invoke(ctx, PkiVaultService_GetUserProfile_FullMethodName, in, out, cOpts...)
@@ -67,17 +65,7 @@ func (c *pkiVaultServiceClient) GetUserProfile(ctx context.Context, in *UserInLi
 	return out, nil
 }
 
-func (c *pkiVaultServiceClient) GetUserInterests(ctx context.Context, in *UserInList, opts ...grpc.CallOption) (*UserInterests, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserInterests)
-	err := c.cc.Invoke(ctx, PkiVaultService_GetUserInterests_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pkiVaultServiceClient) CreateUser(ctx context.Context, in *UserInList, opts ...grpc.CallOption) (*Response, error) {
+func (c *pkiVaultServiceClient) CreateUser(ctx context.Context, in *UserCreateRequest, opts ...grpc.CallOption) (*Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Response)
 	err := c.cc.Invoke(ctx, PkiVaultService_CreateUser_FullMethodName, in, out, cOpts...)
@@ -97,7 +85,7 @@ func (c *pkiVaultServiceClient) UpdateUser(ctx context.Context, in *UserUpdateRe
 	return out, nil
 }
 
-func (c *pkiVaultServiceClient) DeleteUser(ctx context.Context, in *UserInList, opts ...grpc.CallOption) (*Response, error) {
+func (c *pkiVaultServiceClient) DeleteUser(ctx context.Context, in *UserDeleteRequest, opts ...grpc.CallOption) (*Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Response)
 	err := c.cc.Invoke(ctx, PkiVaultService_DeleteUser_FullMethodName, in, out, cOpts...)
@@ -112,11 +100,10 @@ func (c *pkiVaultServiceClient) DeleteUser(ctx context.Context, in *UserInList, 
 // for forward compatibility.
 type PkiVaultServiceServer interface {
 	GetUsers(context.Context, *UserRequest) (*UserList, error)
-	GetUserProfile(context.Context, *UserInList) (*UserInList, error)
-	GetUserInterests(context.Context, *UserInList) (*UserInterests, error)
-	CreateUser(context.Context, *UserInList) (*Response, error)
+	GetUserProfile(context.Context, *GetUserRequest) (*UserInList, error)
+	CreateUser(context.Context, *UserCreateRequest) (*Response, error)
 	UpdateUser(context.Context, *UserUpdateRequest) (*Response, error)
-	DeleteUser(context.Context, *UserInList) (*Response, error)
+	DeleteUser(context.Context, *UserDeleteRequest) (*Response, error)
 	mustEmbedUnimplementedPkiVaultServiceServer()
 }
 
@@ -130,19 +117,16 @@ type UnimplementedPkiVaultServiceServer struct{}
 func (UnimplementedPkiVaultServiceServer) GetUsers(context.Context, *UserRequest) (*UserList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
 }
-func (UnimplementedPkiVaultServiceServer) GetUserProfile(context.Context, *UserInList) (*UserInList, error) {
+func (UnimplementedPkiVaultServiceServer) GetUserProfile(context.Context, *GetUserRequest) (*UserInList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserProfile not implemented")
 }
-func (UnimplementedPkiVaultServiceServer) GetUserInterests(context.Context, *UserInList) (*UserInterests, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserInterests not implemented")
-}
-func (UnimplementedPkiVaultServiceServer) CreateUser(context.Context, *UserInList) (*Response, error) {
+func (UnimplementedPkiVaultServiceServer) CreateUser(context.Context, *UserCreateRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
 func (UnimplementedPkiVaultServiceServer) UpdateUser(context.Context, *UserUpdateRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
-func (UnimplementedPkiVaultServiceServer) DeleteUser(context.Context, *UserInList) (*Response, error) {
+func (UnimplementedPkiVaultServiceServer) DeleteUser(context.Context, *UserDeleteRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedPkiVaultServiceServer) mustEmbedUnimplementedPkiVaultServiceServer() {}
@@ -185,7 +169,7 @@ func _PkiVaultService_GetUsers_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _PkiVaultService_GetUserProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInList)
+	in := new(GetUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -197,31 +181,13 @@ func _PkiVaultService_GetUserProfile_Handler(srv interface{}, ctx context.Contex
 		FullMethod: PkiVaultService_GetUserProfile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PkiVaultServiceServer).GetUserProfile(ctx, req.(*UserInList))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PkiVaultService_GetUserInterests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInList)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PkiVaultServiceServer).GetUserInterests(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PkiVaultService_GetUserInterests_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PkiVaultServiceServer).GetUserInterests(ctx, req.(*UserInList))
+		return srv.(PkiVaultServiceServer).GetUserProfile(ctx, req.(*GetUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PkiVaultService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInList)
+	in := new(UserCreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -233,7 +199,7 @@ func _PkiVaultService_CreateUser_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: PkiVaultService_CreateUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PkiVaultServiceServer).CreateUser(ctx, req.(*UserInList))
+		return srv.(PkiVaultServiceServer).CreateUser(ctx, req.(*UserCreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -257,7 +223,7 @@ func _PkiVaultService_UpdateUser_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _PkiVaultService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInList)
+	in := new(UserDeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -269,7 +235,7 @@ func _PkiVaultService_DeleteUser_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: PkiVaultService_DeleteUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PkiVaultServiceServer).DeleteUser(ctx, req.(*UserInList))
+		return srv.(PkiVaultServiceServer).DeleteUser(ctx, req.(*UserDeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -288,10 +254,6 @@ var PkiVaultService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserProfile",
 			Handler:    _PkiVaultService_GetUserProfile_Handler,
-		},
-		{
-			MethodName: "GetUserInterests",
-			Handler:    _PkiVaultService_GetUserInterests_Handler,
 		},
 		{
 			MethodName: "CreateUser",
